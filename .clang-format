@@ -1,1 +1,12 @@
-DisableFormat: true
+BasedOnStyle: Google
+UseTab: Never
+TabWidth: 4
+AccessModifierOffset: -2
+BreakBeforeBraces: Linux
+# Wider columns can make conditions harder to read
+ColumnLimit: 90
+# Makes maintaining initalizer lists a little easier
+BreakConstructorInitializersBeforeComma: true
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+# Single line methods can be harder to read
+AllowShortFunctionsOnASingleLine: false
