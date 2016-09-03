@@ -12,8 +12,7 @@ class CutsceneObject : public GameObject
   ModelFrame* _bone;
 
 public:
-  CutsceneObject(GameWorld* engine, ObjectID modelid, const glm::vec3& pos, const glm::quat& rot,
-                 const ModelRef& model);
+  CutsceneObject(GameWorld* engine, ObjectID modelid, const glm::vec3& pos, const glm::quat& rot);
   ~CutsceneObject();
 
   Type type()

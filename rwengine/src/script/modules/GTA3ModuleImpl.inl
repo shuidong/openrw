@@ -3549,7 +3549,7 @@ bool opcode_0137(const ScriptArguments& args, const ScriptVehicle vehicle, const
 	auto data = args.getWorld()->data->findObjectType<VehicleModelData>(model);
 	RW_CHECK(data, "non-vehicle model ID");
 	if (data) {
-		return vehicle->model->name == data->modelName;
+		return vehicle->getObjectID() == model;
 	}
 	return false;
 }
@@ -6840,12 +6840,9 @@ void opcode_023c(const ScriptArguments& args, const ScriptInt arg1, const Script
 	@arg arg1 
 */
 bool opcode_023d(const ScriptArguments& args, const ScriptInt arg1) {
-	auto model = args.getState()->specialCharacters[arg1];
-	auto modelfind = args.getWorld()->data->models.find(model);
-	if( modelfind != args.getWorld()->data->models.end() && modelfind->second->resource != nullptr ) {
-		return true;
-	}
-	return false;
+  constexpr ObjectID kFirstSpecialID = 26;
+  auto& modeldata = args.getWorld()->data->objectTypes[kFirstSpecialID + arg1 - 1];
+  return modeldata->model != nullptr;
 }
 
 /**
@@ -8453,9 +8450,12 @@ void opcode_02f4(const ScriptArguments& args, const ScriptObject object0, const 
 	RW_UNUSED(object1);
 	auto id = args[1].integer;
 	auto actor = args.getObject<CutsceneObject>(0);
+	auto actordata = args.getWorld()->data->objectTypes[actor->getObjectID()];
 	CutsceneObject* object = args.getWorld()->createCutsceneObject(id, args.getWorld()->state->currentCutscene->meta.sceneOffset );
+	auto actormodel = actordata->model;
 
-	auto headframe = actor->model->resource->findFrame("shead");
+	auto headframe = actormodel->findFrame("shead");
+	RW_CHECK(headframe, "shead frame missing");
 	actor->skeleton->setEnabled(headframe, false);
 	object->setParentActor(actor, headframe);
 
@@ -9800,7 +9800,7 @@ bool opcode_0351(const ScriptArguments& args) {
 */
 void opcode_0352(const ScriptArguments& args, const ScriptCharacter character, const ScriptString arg2) {
 	RW_UNUSED(args);
-	character->changeCharacterModel(arg2);
+	character->overrideModel(arg2);
 }
 
 /**
@@ -11329,6 +11329,7 @@ bool opcode_03b5(const ScriptArguments& args) {
 	@arg model1 Model ID
 */
 void opcode_03b6(const ScriptArguments& args, ScriptVec3 coord, const ScriptFloat radius, const ScriptModel model0, const ScriptModel model1) {
+#if 0
 	if( std::abs(model0) > 178 || std::abs(model1) > 178 ) {
 		/// @todo implement this path, move model code into ScriptArguments
 		return;
@@ -11348,7 +11349,6 @@ void opcode_03b6(const ScriptArguments& args, ScriptVec3 coord, const ScriptFloa
 	/// @todo Objects need to adopt the new object ID, not just the model.
 	for(auto p : args.getWorld()->instancePool.objects) {
 		auto o = p.second;
-		if( !o->model ) continue;
 		if( o->model->name != oldmodel ) continue;
 		float d = glm::distance(coord, o->getPosition());
 		if( d < radius ) {
@@ -11358,6 +11358,7 @@ void opcode_03b6(const ScriptArguments& args, ScriptVec3 coord, const ScriptFloa
 			inst->model = args.getWorld()->data->models[newmodel];
 		}
 	}
+#endif
 }
 
 /**

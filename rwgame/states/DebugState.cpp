@@ -167,6 +167,7 @@ Menu* DebugState::createMapMenu()
       "Jump to Hospital",
       [=] { jumpCharacter(game, player, glm::vec3(1123.77, -569.15, 100.0)); },
       kDebugEntryHeight));
+#if 0
   m->addEntry(
       Menu::lambda("Unsolid garage doors",
                    [=] {
@@ -194,6 +195,7 @@ Menu* DebugState::createMapMenu()
                      }
                    },
                    kDebugEntryHeight));
+#endif
 
   return m;
 }

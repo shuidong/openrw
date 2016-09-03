@@ -42,8 +42,8 @@ GameData::GameData(Logger* log, WorkContext* work, const std::string& path)
 GameData::~GameData()
 {
   for (auto& m : models) {
-    if (m.second->resource) {
-      delete m.second->resource;
+    if (m.second) {
+      delete m.second;
     }
   }
 }
@@ -359,7 +359,7 @@ void GameData::loadDFF(const std::string& name, bool async)
   // Before starting the job make sure the file isn't loaded again.
   loadedFiles.insert({name, true});
 
-  models[realname] = ModelRef(new ResourceHandle<Model>(realname));
+  models[realname] = nullptr;
 
   auto job = new BackgroundLoaderJob<Model, LoaderDFF>{workContext, &this->index, name,
                                                        models[realname]};
@@ -371,6 +371,39 @@ void GameData::loadDFF(const std::string& name, bool async)
     job->complete();
     delete job;
   }
+}
+
+Model *GameData::loadObjectDFF(const std::string &name)
+{
+  auto file = openFile(name);
+  if (!file) {
+    return nullptr;
+  }
+  LoaderDFF l;
+  return l.loadFromMemory(file);
+}
+
+Model *GameData::getOrLoadObjectDFF(ObjectID id)
+{
+  auto def = objectTypes[id];
+
+  if (def->model != nullptr) {
+    return def->model;
+  }
+
+  std::string modelname = def->modelName;
+  std::string texturename = def->textureName;
+
+  std::transform(std::begin(modelname), std::end(modelname), std::begin(modelname),
+       tolower);
+  std::transform(std::begin(texturename), std::end(texturename),
+       std::begin(texturename), tolower);
+
+  if (!texturename.empty()) {
+    loadTXD(texturename + ".txd", true);
+  }
+
+  return def->model = loadObjectDFF(modelname + ".dff");
 }
 
 void GameData::loadIFP(const std::string& name)

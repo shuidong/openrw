@@ -7,6 +7,7 @@
 #include <objects/CharacterObject.hpp>
 #include <objects/VehicleObject.hpp>
 #include <rw/defines.hpp>
+#include <algorithm>
 
 // TODO: make this not hardcoded
 static glm::vec3 enter_offset(0.81756252f, 0.34800607f, -0.486281008f);
@@ -14,9 +15,10 @@ static glm::vec3 enter_offset(0.81756252f, 0.34800607f, -0.486281008f);
 const float CharacterObject::DefaultJumpSpeed = 2.f;
 
 CharacterObject::CharacterObject(GameWorld* engine, ObjectID modelid, const glm::vec3& pos,
-                                 const glm::quat& rot, const ModelRef& model,
+                                 const glm::quat& rot, Model *model,
                                  std::shared_ptr<CharacterModelData> data)
-    : GameObject(engine, modelid, pos, rot, model)
+    : GameObject(engine, modelid, pos, rot)
+    , model(model)
     , currentState({})
     , currentVehicle(nullptr)
     , currentSeat(0)
@@ -69,7 +71,7 @@ CharacterObject::CharacterObject(GameWorld* engine, ObjectID modelid, const glm:
 
   if (model) {
     skeleton = new Skeleton;
-    animator = new Animator(model->resource, skeleton);
+    animator = new Animator(model, skeleton);
 
     createActor();
   }
@@ -206,8 +208,8 @@ glm::vec3 CharacterObject::updateMovementAnimation(float dt)
 
   // If we have to, interrogate the movement animation
   if (movementAnimation != animations.idle) {
-    if (!model->resource->frames[0]->getChildren().empty()) {
-      ModelFrame* root = model->resource->frames[0]->getChildren()[0];
+    if (!model->frames[0]->getChildren().empty()) {
+      ModelFrame* root = model->frames[0]->getChildren()[0];
       auto it = movementAnimation->bones.find(root->getName());
       if (it != movementAnimation->bones.end()) {
         AnimationBone* rootBone = it->second;
@@ -255,28 +257,27 @@ void CharacterObject::tick(float dt)
   }
 }
 
-#include <algorithm>
-void CharacterObject::changeCharacterModel(const std::string& name)
+void CharacterObject::overrideModel(const std::string &name)
 {
-  auto modelName = std::string(name);
-  std::transform(modelName.begin(), modelName.end(), modelName.begin(), ::tolower);
+  std::string lowername = name;
+  std::transform(std::begin(lowername), std::end(lowername),
+                 std::begin(lowername), ::tolower);
 
-  engine->data->loadDFF(modelName + ".dff");
-  engine->data->loadTXD(modelName + ".txd");
+  // Load the requested model sync
+  engine->data->loadDFF(lowername+".dff");
+  engine->data->loadTXD(lowername+".txd");
+  model = engine->data->models[lowername];
+  RW_CHECK(model, "Character override model is null");
 
-  auto& models = engine->data->models;
-  auto mfind = models.find(modelName);
-  if (mfind != models.end()) {
-    model = mfind->second;
-  }
-
-  if (skeleton) {
+  if (animator) {
     delete animator;
+  }
+  if (skeleton) {
     delete skeleton;
   }
 
   skeleton = new Skeleton;
-  animator = new Animator(model->resource, skeleton);
+  animator = new Animator(model, skeleton);
 }
 
 void CharacterObject::updateCharacter(float dt)

@@ -88,10 +88,10 @@ private:
 };
 
 VehicleObject::VehicleObject(GameWorld* engine, ObjectID modelid, const glm::vec3& pos,
-                             const glm::quat& rot, const ModelRef& model,
+                             const glm::quat& rot,
                              VehicleDataHandle data, VehicleInfoHandle info,
                              const glm::u8vec3& prim, const glm::u8vec3& sec)
-    : GameObject(engine, modelid, pos, rot, model)
+    : GameObject(engine, modelid, pos, rot)
     , steerAngle(0.f)
     , throttle(0.f)
     , brake(0.f)
@@ -152,7 +152,8 @@ VehicleObject::VehicleObject(GameWorld* engine, ObjectID modelid, const glm::vec
     // Hide all LOD and damage frames.
     skeleton = new Skeleton;
 
-    for (ModelFrame* frame : model->resource->frames) {
+    auto model = engine->data->getOrLoadObjectDFF(getObjectID());
+    for (ModelFrame* frame : model->frames) {
       auto& name = frame->getName();
       bool isDam = name.find("_dam") != name.npos;
       bool isLod = name.find("lo") != name.npos;
@@ -558,8 +559,9 @@ bool VehicleObject::takeDamage(const GameObject::DamageInfo& dmg)
 
       if (p->normal == nullptr) continue;
 
+      auto model = engine->data->getOrLoadObjectDFF(getObjectID());
       if (skeleton->getData(p->normal->getIndex()).enabled) {
-        auto& geom = model->resource->geometries[p->normal->getGeometries()[0]];
+        auto& geom = model->geometries[p->normal->getGeometries()[0]];
         auto pp = p->normal->getMatrix() * glm::vec4(0.f, 0.f, 0.f, 1.f);
         float td = glm::distance(glm::vec3(pp) + geom->geometryBounds.center, dpoint);
         if (td < geom->geometryBounds.radius * 1.2f) {
@@ -685,7 +687,8 @@ void VehicleObject::createObjectHinge(Part* part)
 
   if (okframe->getGeometries().size() == 0) return;
 
-  auto& geom = model->resource->geometries[okframe->getGeometries()[0]];
+  auto model = engine->data->getOrLoadObjectDFF(getObjectID());
+  auto& geom = model->geometries[okframe->getGeometries()[0]];
   auto gbounds = geom->geometryBounds;
 
   if (fn.find("door") != fn.npos) {

@@ -10,7 +10,8 @@
 
 void WeaponItem::fireHitscan(CharacterObject* owner)
 {
-  auto handFrame = owner->model->resource->findFrame("srhand");
+  auto ownermodel = owner->ped->model;
+  auto handFrame = ownermodel->findFrame("srhand");
   glm::mat4 handMatrix;
   if (handFrame) {
     while (handFrame->getParent()) {

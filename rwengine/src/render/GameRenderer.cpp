@@ -354,10 +354,10 @@ void GameRenderer::renderWorld(GameWorld* world, const ViewCamera& camera, float
   RW_PROFILE_END();
 
   // Render arrows above anything that isn't radar only (or hidden)
-  ModelRef& arrowModel = world->data->models["arrow"];
-  if (arrowModel && arrowModel->resource) {
+  auto arrowModel = world->data->models["arrow"];
+  if (arrowModel) {
     auto arrowTex = world->data->textures[{"copblue", ""}];
-    auto arrowFrame = arrowModel->resource->findFrame("arrow");
+    auto arrowFrame = arrowModel->findFrame("arrow");
     for (auto& blip : world->state->radarBlips) {
       auto dm = blip.second.display;
       if (dm == BlipData::Hide || dm == BlipData::RadarOnly) {
@@ -385,7 +385,7 @@ void GameRenderer::renderWorld(GameWorld* world, const ViewCamera& camera, float
       dp.ambient = 1.f;
       dp.colour = glm::u8vec4(255, 255, 255, 255);
 
-      auto geom = arrowModel->resource->geometries[arrowFrame->getGeometries()[0]];
+      auto geom = arrowModel->geometries[arrowFrame->getGeometries()[0]];
       Model::SubGeometry& sg = geom->subgeom[0];
 
       dp.start = sg.start;

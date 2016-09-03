@@ -1,6 +1,5 @@
 #pragma once
 
-#include <data/ResourceHandle.hpp>
 #include <job/WorkContext.hpp>
 #include <platform/FileIndex.hpp>
 
@@ -11,10 +10,9 @@ template <class T, class L>
 class BackgroundLoaderJob : public WorkJob
 {
 public:
-  typedef typename ResourceHandle<T>::Ref TypeRef;
 
   BackgroundLoaderJob(WorkContext* context, FileIndex* index, const std::string& file,
-                      const TypeRef& ref)
+                      T*& ref)
       : WorkJob(context), index(index), filename(file), resourceRef(ref)
   {
   }
@@ -29,8 +27,7 @@ public:
     if (data) {
       L loader;
 
-      resourceRef->resource = loader.loadFromMemory(data);
-      resourceRef->state = RW::Loaded;
+      resourceRef = loader.loadFromMemory(data);
     }
   }
 
@@ -38,5 +35,5 @@ private:
   FileIndex* index;
   std::string filename;
   FileHandle data;
-  TypeRef resourceRef;
+  T*& resourceRef;
 };

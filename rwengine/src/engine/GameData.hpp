@@ -131,6 +131,9 @@ public:
    */
   void loadDFF(const std::string& name, bool async = false);
 
+  Model* loadObjectDFF(const std::string& name);
+  Model* getOrLoadObjectDFF(ObjectID id);
+
   /**
    * Loads an IFP file containing animations
    */
@@ -226,7 +229,7 @@ public:
   /**
    * Loaded models
    */
-  std::map<std::string, ResourceHandle<Model>::Ref> models;
+  std::map<std::string, Model*> models;
 
   /**
    * Loaded textures (Textures are ID by name and alpha pairs)

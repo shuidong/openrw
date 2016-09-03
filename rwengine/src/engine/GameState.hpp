@@ -306,10 +306,6 @@ public:
 
   std::string lastMissionName;
 
-  /// Stores the "special" character and cutscene model indices.
-  std::map<unsigned short, std::string> specialCharacters;
-  std::map<unsigned short, std::string> specialModels;
-
   /// Handles on screen text behaviour
   ScreenText text;
 

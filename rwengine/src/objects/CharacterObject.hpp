@@ -105,6 +105,7 @@ struct AnimationGroup {
 class CharacterObject : public GameObject
 {
 private:
+  Model* model = nullptr;
   CharacterState currentState;
 
   VehicleObject* currentVehicle;
@@ -141,10 +142,10 @@ public:
    * @param pos
    * @param rot
    * @param model
-   * @param ped PEDS_t struct to use.
+   * @param data character information
    */
   CharacterObject(GameWorld* engine, ObjectID modelid, const glm::vec3& pos, const glm::quat& rot,
-                  const ModelRef& model, std::shared_ptr<CharacterModelData> data);
+                  Model* model, std::shared_ptr<CharacterModelData> data);
 
   ~CharacterObject();
 
@@ -164,10 +165,11 @@ public:
     return currentState;
   }
 
-  /**
-   * @brief Loads the model and texture for a character skin.
-   */
-  void changeCharacterModel(const std::string& name);
+  void overrideModel(const std::string& name);
+  Model* getModel() const
+  {
+    return model;
+  }
 
   /**
    * @brief updateCharacter updates internall bullet Character.

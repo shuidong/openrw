@@ -43,25 +43,20 @@ BOOST_AUTO_TEST_CASE(test_load_dff)
 BOOST_AUTO_TEST_CASE(test_loader_job)
 {
 	{
-		WorkContext ctx;
-
-		ResourceHandle<Model>::Ref modelRef { new ResourceHandle<Model>("landstal.dff") };
+    WorkContext ctx;
+    Model* m = nullptr;
 		
 		auto index = &Global::get().e->data->index;
-		auto job = new BackgroundLoaderJob<Model, LoaderDFF>{ &ctx, index, "landstal.dff", modelRef };
+    auto job = new BackgroundLoaderJob<Model, LoaderDFF>{ &ctx, index, "landstal.dff", m };
 
-		ctx.queueJob(job);
+    job->work();
+    job->complete();
 
-		while( modelRef->state == RW::Loading ) {
-			ctx.update();
-			std::this_thread::yield();
-		}
+    BOOST_REQUIRE( m != nullptr );
 
-		BOOST_REQUIRE( modelRef->resource != nullptr );
-
-		BOOST_CHECK( modelRef->resource->frames.size() > 0 );
+    BOOST_CHECK( m->frames.size() > 0 );
 		
-		delete modelRef->resource;
+    delete m;
 	}
 
 }

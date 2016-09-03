@@ -107,7 +107,7 @@ void ProjectileObject::cleanup()
 
 ProjectileObject::ProjectileObject(GameWorld* world, ObjectID modelid, const glm::vec3& position,
                                    const ProjectileObject::ProjectileInfo& info)
-    : GameObject(world, modelid, position, glm::quat(), nullptr)
+    : GameObject(world, modelid, position, glm::quat())
     , _info(info)
     , _body(nullptr)
     , _ghostBody(nullptr)

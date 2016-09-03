@@ -166,25 +166,11 @@ InstanceObject* GameWorld::createInstance(const uint16_t id, const glm::vec3& po
 {
   auto oi = data->findObjectType<SimpleModelData>(id);
   if (oi) {
-    std::string modelname = oi->modelName;
-    std::string texturename = oi->textureName;
-
-    std::transform(std::begin(modelname), std::end(modelname), std::begin(modelname),
-                   tolower);
-    std::transform(std::begin(texturename), std::end(texturename),
-                   std::begin(texturename), tolower);
-
-    // Ensure the relevant data is loaded.
-    if (!oi->modelName.empty()) {
-      if (modelname != "null") {
-        data->loadDFF(modelname + ".dff", false);
-      }
-    }
-    if (!texturename.empty()) {
-      data->loadTXD(texturename + ".txd", true);
+    if (oi->modelName.empty()) {
+      logger->warning("World", "Instance with missing model: " + std::to_string(id));
     }
 
-    ModelRef m = data->models[modelname];
+    Model* model = data->getOrLoadObjectDFF(id);
 
     // Check for dynamic data.
     auto dyit = data->dynamicObjectData.find(oi->modelName);
@@ -193,11 +179,7 @@ InstanceObject* GameWorld::createInstance(const uint16_t id, const glm::vec3& po
       dydata = dyit->second;
     }
 
-    if (modelname.empty()) {
-      logger->warning("World", "Instance with missing model: " + std::to_string(id));
-    }
-
-    auto instance = new InstanceObject(this, id, pos, rot, m, glm::vec3(1.f, 1.f, 1.f), oi,
+    auto instance = new InstanceObject(this, id, pos, rot, glm::vec3(1.f, 1.f, 1.f), oi,
                                        nullptr, dydata);
 
     instancePool.insert(instance);
@@ -253,59 +235,20 @@ void GameWorld::cleanupTraffic(const ViewCamera& focus)
 CutsceneObject* GameWorld::createCutsceneObject(const uint16_t id, const glm::vec3& pos,
                                                 const glm::quat& rot)
 {
-  std::string modelname;
-  std::string texturename;
-
-  auto type = data->objectTypes.find(id);
-  if (type != data->objectTypes.end()) {
-    if (type->second->type == ModelDataType::ClumpInfo) {
-      modelname = state->specialModels[id];
-      texturename = state->specialModels[id];
-    } else {
-      if (type->second->type == ModelDataType::SimpleInfo) {
-        auto v = static_cast<SimpleModelData*>(type->second.get());
-        modelname = v->modelName;
-        texturename = v->textureName;
-      } else if (type->second->type == ModelDataType::PedInfo) {
-        auto v = static_cast<CharacterModelData*>(type->second.get());
-        modelname = v->modelName;
-        texturename = v->textureName;
-
-        static std::string specialPrefix("special");
-        if (!modelname.compare(0, specialPrefix.size(), specialPrefix)) {
-          auto sid = modelname.substr(specialPrefix.size());
-          unsigned short specialID = std::atoi(sid.c_str());
-          modelname = state->specialCharacters[specialID];
-          texturename = state->specialCharacters[specialID];
-        }
-      }
-    }
-  }
-
+#if 0
   if (id == 0) {
     auto playerobj = pedestrianPool.find(state->playerObject);
     if (playerobj) {
       modelname = playerobj->model->name;
     }
   }
+#endif
 
   // Ensure the relevant data is loaded.
-  if (modelname.empty()) {
-    logger->error("World", "Cutscene object " + std::to_string(id) + " has no model");
-    return nullptr;
-  }
+  Model* model = data->getOrLoadObjectDFF(id);
+  RW_UNUSED(model);
 
-  if (modelname != "null") {
-    data->loadDFF(modelname + ".dff", false);
-  }
-
-  if (!texturename.empty()) {
-    data->loadTXD(texturename + ".txd", true);
-  }
-
-  ModelRef m = data->models[modelname];
-
-  auto instance = new CutsceneObject(this, id, pos, rot, m);
+  auto instance = new CutsceneObject(this, id, pos, rot);
 
   cutscenePool.insert(instance);
   allObjects.push_back(instance);
@@ -347,8 +290,7 @@ VehicleObject* GameWorld::createVehicle(const uint16_t id, const glm::vec3& pos,
       }
     }
 
-    ModelRef& m = data->models[vti->modelName];
-    auto model = m->resource;
+    auto model = data->getOrLoadObjectDFF(id);
     auto info = data->vehicleInfo.find(vti->handlingID);
     if (model && info != data->vehicleInfo.end()) {
       if (info->second->wheels.size() == 0 && info->second->seats.size() == 0) {
@@ -382,7 +324,7 @@ VehicleObject* GameWorld::createVehicle(const uint16_t id, const glm::vec3& pos,
       }
     }
 
-    auto vehicle = new VehicleObject{this, id, pos, rot, m, vti, info->second, prim, sec};
+    auto vehicle = new VehicleObject{this, id, pos, rot, vti, info->second, prim, sec};
     vehicle->setGameObjectID(gid);
 
     vehiclePool.insert(vehicle);
@@ -398,33 +340,10 @@ CharacterObject* GameWorld::createPedestrian(const uint16_t id, const glm::vec3&
 {
   auto pt = data->findObjectType<CharacterModelData>(id);
   if (pt) {
-    std::string modelname = pt->modelName;
-    std::string texturename = pt->textureName;
+    auto model = data->getOrLoadObjectDFF(id);
 
-    // Ensure the relevant data is loaded.
-    if (!pt->modelName.empty()) {
-      // Some model names have special meanings.
-      /// @todo Should CharacterObjects handle this?
-      static std::string specialPrefix("special");
-      if (!modelname.compare(0, specialPrefix.size(), specialPrefix)) {
-        auto sid = modelname.substr(specialPrefix.size());
-        unsigned short specialID = std::atoi(sid.c_str());
-        modelname = state->specialCharacters[specialID];
-        texturename = state->specialCharacters[specialID];
-      }
-
-      if (modelname != "null") {
-        data->loadDFF(modelname + ".dff");
-      }
-    }
-    if (!texturename.empty()) {
-      data->loadTXD(texturename + ".txd");
-    }
-
-    ModelRef m = data->models[modelname];
-
-    if (m && m->resource) {
-      auto ped = new CharacterObject(this, id, pos, rot, m, pt);
+    if (model) {
+      auto ped = new CharacterObject(this, id, pos, rot, model, pt);
       ped->setGameObjectID(gid);
       new DefaultAIController(ped);
       pedestrianPool.insert(ped);
@@ -449,10 +368,10 @@ CharacterObject* GameWorld::createPlayer(const glm::vec3& pos, const glm::quat& 
     data->loadDFF(modelname + ".dff");
     data->loadTXD(texturename + ".txd");
 
-    ModelRef m = data->models[modelname];
+    auto m = data->models[modelname];
 
-    if (m && m->resource) {
-      auto ped = new CharacterObject(this, 0, pos, rot, m, nullptr);
+    if (m) {
+      auto ped = new CharacterObject(this, 0, pos, rot, m, pt);
       ped->setGameObjectID(gid);
       ped->setLifetime(GameObject::PlayerLifetime);
       players.push_back(new PlayerController(ped));
@@ -873,17 +792,26 @@ void GameWorld::loadSpecialCharacter(const unsigned short index, const std::stri
 {
   std::string lowerName(name);
   std::transform(lowerName.begin(), lowerName.end(), lowerName.begin(), ::tolower);
-  /// @todo a bit more smarter than this
-  state->specialCharacters[index] = lowerName;
-  data->loadDFF(lowerName + ".dff");
+  /// @todo find a way to avoid hard-coding
+  constexpr ObjectID kFirstSpecialID = 26;
+  auto& modeldata = data->objectTypes[kFirstSpecialID + index - 1];
+  modeldata->model = data->loadObjectDFF(lowerName + ".dff");
+  /// @todo this should be handled differently with librw
+  data->loadTXD(lowerName + ".txd");
 }
 
 void GameWorld::loadSpecialModel(const unsigned short index, const std::string& name)
 {
-  std::string lowerName(name);
-  std::transform(lowerName.begin(), lowerName.end(), lowerName.begin(), ::tolower);
-  /// @todo a bit more smarter than this
-  state->specialModels[index] = lowerName;
+  auto& modeldata = data->objectTypes[index];
+  RW_CHECK(modeldata->type == ModelDataType::ClumpInfo, "non-HIER");
+  if (modeldata->type == ModelDataType::ClumpInfo) {
+    auto modelname = name;
+    std::transform(std::begin(modelname), std::end(modelname), std::begin(modelname),
+         tolower);
+    modeldata->model = data->loadObjectDFF(modelname+".dff");
+    /// @todo this should be handled differently with librw
+    data->loadTXD(modelname + ".txd");
+  }
 }
 
 void GameWorld::disableAIPaths(AIGraphNode::NodeType type, const glm::vec3& min,

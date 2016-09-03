@@ -7,6 +7,7 @@
 #include <vector>
 
 #include <data/PathData.hpp>
+#include <data/Model.hpp>
 #ifdef RW_WINDOWS
 #include <rw_mingw.hpp>
 #endif
@@ -31,6 +32,9 @@ public:
   const ModelDataType type;
   std::string modelName;
   std::string textureName;
+
+  /// @todo replace with correct data
+  Model* model = nullptr;
 
   BaseModelData(const ModelDataType type) : type(type)
   {

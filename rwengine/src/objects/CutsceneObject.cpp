@@ -1,13 +1,15 @@
 #include <data/Skeleton.hpp>
 #include <engine/Animator.hpp>
 #include <objects/CutsceneObject.hpp>
+#include <engine/GameWorld.hpp>
+#include <engine/GameData.hpp>
 
 CutsceneObject::CutsceneObject(GameWorld *engine, ObjectID modelid, const glm::vec3 &pos,
-                               const glm::quat &rot, const ModelRef &model)
-    : GameObject(engine, modelid, pos, rot, model), _parent(nullptr), _bone(nullptr)
+                               const glm::quat &rot)
+    : GameObject(engine, modelid, pos, rot), _parent(nullptr), _bone(nullptr)
 {
   skeleton = new Skeleton;
-  animator = new Animator(model->resource, skeleton);
+  animator = new Animator(engine->data->getOrLoadObjectDFF(modelid), skeleton);
 }
 
 CutsceneObject::~CutsceneObject()

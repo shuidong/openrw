@@ -24,7 +24,7 @@ public:
   bool _enablePhysics;
 
   InstanceObject(GameWorld* engine, ObjectID modelid, const glm::vec3& pos, const glm::quat& rot,
-                 const ModelRef& model, const glm::vec3& scale,
+                 const glm::vec3& scale,
                  std::shared_ptr<SimpleModelData> obj, InstanceObject* lod,
                  std::shared_ptr<DynamicObjectData> dyn);
   ~InstanceObject();

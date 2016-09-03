@@ -207,9 +207,9 @@ void IngameState::tick(float dt)
                        ? static_cast<CharacterObject*>(target)->getCurrentVehicle()
                        : nullptr;
     if (vehicle) {
-      auto model = vehicle->model;
+      auto model = getWorld()->data->getOrLoadObjectDFF(vehicle->getObjectID());
       float maxDist = 0.f;
-      for (auto& g : model->resource->geometries) {
+      for (auto& g : model->geometries) {
         float partSize = glm::length(g->geometryBounds.center) + g->geometryBounds.radius;
         maxDist = std::max(partSize, maxDist);
       }

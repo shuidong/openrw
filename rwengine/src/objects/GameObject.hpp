@@ -36,9 +36,6 @@ public:
   glm::vec3 position;
   glm::quat rotation;
 
-  /// Reference to Model data
-  ModelRef model;
-
   GameWorld* engine;
 
   Animator* animator;  /// Object's animator.
@@ -56,15 +53,13 @@ public:
    */
   bool visible;
 
-  GameObject(GameWorld* engine, ObjectID modelid, const glm::vec3& pos, const glm::quat& rot,
-             ModelRef model)
+  GameObject(GameWorld* engine, ObjectID modelid, const glm::vec3& pos, const glm::quat& rot)
       : _lastPosition(pos)
       , _lastRotation(rot)
       , objectID(0)
       , modelid_(modelid)
       , position(pos)
       , rotation(rot)
-      , model(model)
       , engine(engine)
       , animator(nullptr)
       , skeleton(nullptr)
