@@ -1,14 +1,13 @@
-#include <objects/CutsceneObject.hpp>
-#include <engine/Animator.hpp>
 #include <data/Skeleton.hpp>
+#include <engine/Animator.hpp>
+#include <objects/CutsceneObject.hpp>
 
-CutsceneObject::CutsceneObject(GameWorld *engine, const glm::vec3 &pos, const glm::quat& rot, const ModelRef& model)
-	: GameObject(engine, pos, rot, model)
-	, _parent(nullptr)
-	, _bone(nullptr)
+CutsceneObject::CutsceneObject(GameWorld *engine, const glm::vec3 &pos,
+                               const glm::quat &rot, const ModelRef &model)
+    : GameObject(engine, pos, rot, model), _parent(nullptr), _bone(nullptr)
 {
-	skeleton = new Skeleton;
-	animator = new Animator(model->resource, skeleton);
+  skeleton = new Skeleton;
+  animator = new Animator(model->resource, skeleton);
 }
 
 CutsceneObject::~CutsceneObject()
@@ -17,11 +16,11 @@ CutsceneObject::~CutsceneObject()
 
 void CutsceneObject::tick(float dt)
 {
-	animator->tick(dt);
+  animator->tick(dt);
 }
 
 void CutsceneObject::setParentActor(GameObject *parent, ModelFrame *bone)
 {
-	_parent = parent;
-	_bone = bone;
+  _parent = parent;
+  _bone = bone;
 }
