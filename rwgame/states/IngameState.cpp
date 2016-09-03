@@ -124,9 +124,8 @@ void IngameState::startTest()
       case 141:
         continue;
     }
-    if (vi.second->class_type == ObjectInformation::_class("CARS")) {
+    if (vi.second->type == ModelDataType::VehicleInfo) {
       if (i++ > 20) break;
-      auto vehicle = std::static_pointer_cast<VehicleData>(vi.second);
 
       auto& sp = carPos;
       auto& sr = carRot;

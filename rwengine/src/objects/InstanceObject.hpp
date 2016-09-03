@@ -18,14 +18,14 @@ class InstanceObject : public GameObject
 public:
   glm::vec3 scale;
   CollisionInstance* body;
-  std::shared_ptr<ObjectData> object;
+  std::shared_ptr<SimpleModelData> object;
   InstanceObject* LODinstance;
   std::shared_ptr<DynamicObjectData> dynamics;
   bool _enablePhysics;
 
   InstanceObject(GameWorld* engine, const glm::vec3& pos, const glm::quat& rot,
                  const ModelRef& model, const glm::vec3& scale,
-                 std::shared_ptr<ObjectData> obj, InstanceObject* lod,
+                 std::shared_ptr<SimpleModelData> obj, InstanceObject* lod,
                  std::shared_ptr<DynamicObjectData> dyn);
   ~InstanceObject();
 
@@ -36,7 +36,7 @@ public:
 
   void tick(float dt);
 
-  void changeModel(std::shared_ptr<ObjectData> incoming);
+  void changeModel(std::shared_ptr<SimpleModelData> incoming);
 
   virtual void setRotation(const glm::quat& r);
 

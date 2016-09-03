@@ -35,7 +35,7 @@ inline VehicleObject* getCharacterVehicle(CharacterObject* character)
 }
 inline bool isInModel(const ScriptArguments& args, CharacterObject* character, int model)
 {
-  auto data = args.getWorld()->data->findObjectType<VehicleData>(model);
+  auto data = args.getWorld()->data->findObjectType<VehicleModelData>(model);
   if (data) {
     auto vehicle = getCharacterVehicle(character);
     if (vehicle) {

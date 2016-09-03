@@ -150,8 +150,8 @@ uint16_t GameData::findModelObject(const std::string model)
   auto defit =
       std::find_if(objectTypes.begin(), objectTypes.end(),
                    [&](const decltype(objectTypes)::value_type& d) {
-                     if (d.second->class_type == ObjectInformation::_class("OBJS")) {
-                       auto dat = static_cast<ObjectData*>(d.second.get());
+                     if (d.second->type == ModelDataType::SimpleInfo) {
+                       auto dat = static_cast<SimpleModelData*>(d.second.get());
                        return boost::iequals(dat->modelName, model);
                      }
                      return false;

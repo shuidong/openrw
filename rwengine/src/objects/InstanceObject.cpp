@@ -7,7 +7,7 @@
 
 InstanceObject::InstanceObject(GameWorld* engine, const glm::vec3& pos,
                                const glm::quat& rot, const ModelRef& model,
-                               const glm::vec3& scale, std::shared_ptr<ObjectData> obj,
+                               const glm::vec3& scale, std::shared_ptr<SimpleModelData> obj,
                                InstanceObject* lod,
                                std::shared_ptr<DynamicObjectData> dyn)
     : GameObject(engine, pos, rot, model)
@@ -110,7 +110,7 @@ void InstanceObject::tick(float dt)
   if (animator) animator->tick(dt);
 }
 
-void InstanceObject::changeModel(std::shared_ptr<ObjectData> incoming)
+void InstanceObject::changeModel(std::shared_ptr<SimpleModelData> incoming)
 {
   if (body) {
     delete body;

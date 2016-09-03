@@ -284,7 +284,7 @@ void VehicleObject::tickPhysics(float dt)
       seat.second->updateTransform(passPosition, getRotation());
     }
 
-    if (vehicle->type == VehicleData::BOAT) {
+    if (vehicle->vehicletype == VehicleModelData::BOAT) {
       if (isInWater()) {
         float sign = std::signbit(steerAngle) ? -1.f : 1.f;
         float steer = std::min(info->handling.steeringLock * (3.141f / 180.f),
@@ -362,12 +362,12 @@ void VehicleObject::tickPhysics(float dt)
       float oZ = 0.f;
       oZ = -bbZ / 2.f + (bbZ * (info->handling.percentSubmerged / 120.f));
 
-      if (vehicle->type != VehicleData::BOAT) {
+      if (vehicle->vehicletype != VehicleModelData::BOAT) {
         // Damper motion
         collision->getBulletBody()->setDamping(0.95f, 0.9f);
       }
 
-      if (vehicle->type == VehicleData::BOAT) {
+      if (vehicle->vehicletype == VehicleModelData::BOAT) {
         oZ = 0.f;
       }
 
@@ -389,7 +389,7 @@ void VehicleObject::tickPhysics(float dt)
       applyWaterFloat(vRt);
       applyWaterFloat(vLeft);
     } else {
-      if (vehicle->type == VehicleData::BOAT) {
+      if (vehicle->vehicletype == VehicleModelData::BOAT) {
         collision->getBulletBody()->setDamping(0.1f, 0.8f);
       } else {
         collision->getBulletBody()->setDamping(0.05f, 0.0f);

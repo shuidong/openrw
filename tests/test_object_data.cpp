@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <data/ObjectData.hpp>
+#include <data/ModelData.hpp>
 #include "test_globals.hpp"
 
 BOOST_AUTO_TEST_SUITE(ObjectDataTests)
@@ -16,9 +16,9 @@ BOOST_AUTO_TEST_CASE(test_object_data)
 
 		auto obj = l.objects[1100];
 
-		auto def = std::dynamic_pointer_cast<ObjectData>(obj);
+    auto def = std::dynamic_pointer_cast<SimpleModelData>(obj);
 
-		BOOST_ASSERT(def->class_type == ObjectInformation::_class("OBJS"));
+    BOOST_ASSERT(def->type == ModelDataType::SimpleInfo);
 
 		BOOST_CHECK_EQUAL( def->modelName, "rd_Corner1" );
 		BOOST_CHECK_EQUAL( def->textureName, "generic" );
@@ -35,16 +35,16 @@ BOOST_AUTO_TEST_CASE(test_object_data)
 
 		auto obj = l.objects[90];
 
-		auto def = std::dynamic_pointer_cast<VehicleData>(obj);
+    auto def = std::dynamic_pointer_cast<VehicleModelData>(obj);
 
-		BOOST_ASSERT(def->class_type == ObjectInformation::_class("CARS"));
+    BOOST_ASSERT(def->type == ModelDataType::VehicleInfo);
 
 		BOOST_CHECK_EQUAL( def->modelName, "landstal");
 		BOOST_CHECK_EQUAL( def->textureName, "landstal" );
-		BOOST_CHECK_EQUAL( def->type, VehicleData::CAR );
+    BOOST_CHECK_EQUAL( def->vehicletype, VehicleModelData::CAR );
 		BOOST_CHECK_EQUAL( def->handlingID, "LANDSTAL" );
 		BOOST_CHECK_EQUAL( def->gameName, "LANDSTK" );
-		BOOST_CHECK_EQUAL( def->classType, VehicleData::RICHFAMILY );
+    BOOST_CHECK_EQUAL( def->classType, VehicleModelData::RICHFAMILY );
 		BOOST_CHECK_EQUAL( def->frequency, 10 );
 		BOOST_CHECK_EQUAL( def->wheelModelID, 164 );
 		BOOST_CHECK_CLOSE( def->wheelScale, 0.8f, 0.01f);

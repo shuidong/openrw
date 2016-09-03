@@ -11,44 +11,46 @@
 #include <rw_mingw.hpp>
 #endif
 
-typedef uint16_t ObjectID;
+using ObjectID = uint16_t;
+
+enum class ModelDataType
+{
+  SimpleInfo = 1,
+  ClumpInfo = 4,
+  VehicleInfo = 5,
+  PedInfo = 6
+};
 
 /**
- * Stores basic information about an Object and it's real type.
+ * @brief The BaseModelData struct stores data common to all types
  */
-struct ObjectInformation {
-  typedef size_t ObjectClass;
-  static ObjectClass _class(const std::string& name)
-  {
-    return std::hash<std::string>()(name);
-  }
+class BaseModelData
+{
+public:
+  ObjectID id;
+  const ModelDataType type;
+  std::string modelName;
+  std::string textureName;
 
-  ObjectID ID;
-  const ObjectClass class_type;
-
-  ObjectInformation(const ObjectClass type) : class_type(type)
+  BaseModelData(const ModelDataType type) : type(type)
   {
   }
 
-  virtual ~ObjectInformation()
+  virtual ~BaseModelData()
   {
   }
 };
 
-typedef std::shared_ptr<ObjectInformation> ObjectInformationPtr;
+typedef std::shared_ptr<BaseModelData> ObjectInformationPtr;
 
-/**
- * Data used by	Normal Objects
- */
-struct ObjectData : public ObjectInformation {
-  static const ObjectClass class_id;
+class SimpleModelData : public BaseModelData {
+public:
+  static constexpr ModelDataType kType = ModelDataType::SimpleInfo;
 
-  ObjectData() : ObjectInformation(_class("OBJS"))
+  SimpleModelData() : BaseModelData(kType)
   {
   }
 
-  std::string modelName;
-  std::string textureName;
   uint8_t numClumps;
   float drawDistance[3];
   int32_t flags;
@@ -81,33 +83,40 @@ struct ObjectData : public ObjectInformation {
   std::vector<PathData> paths;
 };
 
-typedef std::shared_ptr<ObjectData> ObjectDataPtr;
+typedef std::shared_ptr<SimpleModelData> ObjectDataPtr;
 
 /**
- * Data used by peds
+ * @todo this should be something like ClumpModelData
  */
-struct CharacterData : public ObjectInformation {
-  static const ObjectClass class_id;
+class CutsceneModelData : public BaseModelData {
+public:
+  static constexpr ModelDataType kType = ModelDataType::ClumpInfo;
 
-  CharacterData() : ObjectInformation(_class("PEDS"))
+  CutsceneModelData() : BaseModelData(kType)
   {
   }
 
-  std::string modelName;
-  std::string textureName;
+};
+
+struct CharacterModelData : public BaseModelData {
+public:
+  static constexpr ModelDataType kType = ModelDataType::PedInfo;
+
+  CharacterModelData() : BaseModelData(kType)
+  {
+  }
+
   std::string type;
   std::string behaviour;
   std::string animGroup;
   uint8_t driveMask;
 };
 
-/**
- * @brief Stores vehicle data loaded from item definition files.
- */
-struct VehicleData : public ObjectInformation {
-  static const ObjectClass class_id;
+class VehicleModelData : public BaseModelData {
+public:
+  static constexpr ModelDataType kType = ModelDataType::VehicleInfo;
 
-  VehicleData() : ObjectInformation(_class("CARS"))
+  VehicleModelData() : BaseModelData(kType)
   {
   }
 
@@ -136,9 +145,7 @@ struct VehicleData : public ObjectInformation {
     HELI,
   };
 
-  std::string modelName;
-  std::string textureName;
-  VehicleType type;
+  VehicleType vehicletype;
   std::string handlingID;
   std::string gameName;
   VehicleClass classType;
@@ -152,18 +159,7 @@ struct VehicleData : public ObjectInformation {
   float wheelScale;  // used only when type == CAR
 };
 
-typedef std::shared_ptr<VehicleData> VehicleDataHandle;
-
-struct CutsceneObjectData : public ObjectInformation {
-  static const ObjectClass class_id;
-
-  CutsceneObjectData() : ObjectInformation(_class("HIER"))
-  {
-  }
-
-  std::string modelName;
-  std::string textureName;
-};
+typedef std::shared_ptr<VehicleModelData> VehicleDataHandle;
 
 /**
  * This is orthogonal to object class, it gives

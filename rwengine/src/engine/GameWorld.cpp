@@ -164,7 +164,7 @@ bool GameWorld::placeItems(const std::string& name)
 InstanceObject* GameWorld::createInstance(const uint16_t id, const glm::vec3& pos,
                                           const glm::quat& rot)
 {
-  auto oi = data->findObjectType<ObjectData>(id);
+  auto oi = data->findObjectType<SimpleModelData>(id);
   if (oi) {
     std::string modelname = oi->modelName;
     std::string texturename = oi->textureName;
@@ -258,16 +258,16 @@ CutsceneObject* GameWorld::createCutsceneObject(const uint16_t id, const glm::ve
 
   auto type = data->objectTypes.find(id);
   if (type != data->objectTypes.end()) {
-    if (type->second->class_type == ObjectInformation::_class("HIER")) {
+    if (type->second->type == ModelDataType::ClumpInfo) {
       modelname = state->specialModels[id];
       texturename = state->specialModels[id];
     } else {
-      if (type->second->class_type == ObjectInformation::_class("OBJS")) {
-        auto v = static_cast<ObjectData*>(type->second.get());
+      if (type->second->type == ModelDataType::SimpleInfo) {
+        auto v = static_cast<SimpleModelData*>(type->second.get());
         modelname = v->modelName;
         texturename = v->textureName;
-      } else if (type->second->class_type == ObjectInformation::_class("PEDS")) {
-        auto v = static_cast<CharacterData*>(type->second.get());
+      } else if (type->second->type == ModelDataType::PedInfo) {
+        auto v = static_cast<CharacterModelData*>(type->second.get());
         modelname = v->modelName;
         texturename = v->textureName;
 
@@ -316,7 +316,7 @@ CutsceneObject* GameWorld::createCutsceneObject(const uint16_t id, const glm::ve
 VehicleObject* GameWorld::createVehicle(const uint16_t id, const glm::vec3& pos,
                                         const glm::quat& rot, GameObjectID gid)
 {
-  auto vti = data->findObjectType<VehicleData>(id);
+  auto vti = data->findObjectType<VehicleModelData>(id);
   if (vti) {
     logger->info("World", "Creating Vehicle ID " + std::to_string(id) + " (" +
                               vti->gameName + ")");
@@ -340,7 +340,7 @@ VehicleObject* GameWorld::createVehicle(const uint16_t id, const glm::vec3& pos,
       logger->warning("World", "No colour palette for vehicle " + vti->modelName);
     }
 
-    auto wi = data->findObjectType<ObjectData>(vti->wheelModelID);
+    auto wi = data->findObjectType<SimpleModelData>(vti->wheelModelID);
     if (wi) {
       if (!wi->textureName.empty()) {
         data->loadTXD(wi->textureName + ".txd");
@@ -396,7 +396,7 @@ VehicleObject* GameWorld::createVehicle(const uint16_t id, const glm::vec3& pos,
 CharacterObject* GameWorld::createPedestrian(const uint16_t id, const glm::vec3& pos,
                                              const glm::quat& rot, GameObjectID gid)
 {
-  auto pt = data->findObjectType<CharacterData>(id);
+  auto pt = data->findObjectType<CharacterModelData>(id);
   if (pt) {
     std::string modelname = pt->modelName;
     std::string texturename = pt->textureName;
@@ -439,7 +439,7 @@ CharacterObject* GameWorld::createPlayer(const glm::vec3& pos, const glm::quat& 
                                          GameObjectID gid)
 {
   // Player object ID is hardcoded to 0.
-  auto pt = data->findObjectType<CharacterData>(0);
+  auto pt = data->findObjectType<CharacterModelData>(0);
   if (pt) {
     // Model name is also hardcoded.
     std::string modelname = "player";
@@ -466,7 +466,7 @@ CharacterObject* GameWorld::createPlayer(const glm::vec3& pos, const glm::quat& 
 
 PickupObject* GameWorld::createPickup(const glm::vec3& pos, int id, int type)
 {
-  auto modelInfo = data->findObjectType<ObjectData>(id);
+  auto modelInfo = data->findObjectType<SimpleModelData>(id);
 
   RW_CHECK(modelInfo != nullptr, "Pickup Object Data is not found");
   if (modelInfo == nullptr) {

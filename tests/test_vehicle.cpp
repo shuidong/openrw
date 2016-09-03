@@ -17,7 +17,7 @@ BOOST_AUTO_TEST_CASE(test_create_vehicle)
 	BOOST_REQUIRE(vehicle->vehicle != nullptr);
 
 	// Hardcoded values for the moment
-	BOOST_CHECK_EQUAL(vehicle->vehicle->type, VehicleData::CAR);
+  BOOST_CHECK_EQUAL(vehicle->vehicle->vehicletype, VehicleModelData::CAR);
 
 	BOOST_CHECK_EQUAL(vehicle->info->wheels.size(), 4);
 

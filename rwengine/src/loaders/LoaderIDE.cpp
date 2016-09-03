@@ -54,7 +54,7 @@ bool LoaderIDE::load(const std::string &filename)
           break;
         case OBJS:
         case TOBJ: {  // Supports Type 1, 2 and 3
-          std::shared_ptr<ObjectData> objs(new ObjectData);
+          std::shared_ptr<SimpleModelData> objs(new SimpleModelData);
 
           std::string id, numClumps, flags, modelName, textureName;
 
@@ -86,7 +86,7 @@ bool LoaderIDE::load(const std::string &filename)
           }
 
           // Put stuff in our struct
-          objs->ID = atoi(id.c_str());
+          objs->id = atoi(id.c_str());
           objs->flags = atoi(flags.c_str());
           objs->modelName = modelName;
           objs->textureName = textureName;
@@ -97,11 +97,11 @@ bool LoaderIDE::load(const std::string &filename)
             objs->LOD = true;
           }
 
-          objects.insert({objs->ID, objs});
+          objects.insert({objs->id, objs});
           break;
         }
         case CARS: {
-          std::shared_ptr<VehicleData> cars(new VehicleData);
+          std::shared_ptr<VehicleModelData> cars(new VehicleModelData);
 
           std::string id, type, classType, frequency, lvl, comprules, wheelModelID,
               wheelScale;
@@ -119,41 +119,41 @@ bool LoaderIDE::load(const std::string &filename)
           getline(strstream, wheelModelID, ',');
           getline(strstream, wheelScale, ',');
 
-          cars->ID = atoi(id.c_str());
+          cars->id = atoi(id.c_str());
           cars->frequency = atoi(frequency.c_str());
           cars->lvl = atoi(lvl.c_str());
           cars->comprules = atoi(comprules.c_str());
 
           if (type == "car") {
-            cars->type = VehicleData::CAR;
+            cars->vehicletype = VehicleModelData::CAR;
             cars->wheelModelID = atoi(wheelModelID.c_str());
             cars->wheelScale = atof(wheelScale.c_str());
           } else if (type == "boat") {
-            cars->type = VehicleData::BOAT;
+            cars->vehicletype = VehicleModelData::BOAT;
           } else if (type == "train") {
-            cars->type = VehicleData::TRAIN;
+            cars->vehicletype = VehicleModelData::TRAIN;
             cars->modelLOD = atoi(wheelModelID.c_str());
           } else if (type == "plane") {
-            cars->type = VehicleData::PLANE;
+            cars->vehicletype = VehicleModelData::PLANE;
           } else if (type == "heli") {
-            cars->type = VehicleData::HELI;
+            cars->vehicletype = VehicleModelData::HELI;
           }
 
-          const std::map<VehicleData::VehicleClass, std::string> classTypes{
-              {VehicleData::IGNORE, "ignore"},
-              {VehicleData::NORMAL, "normal"},
-              {VehicleData::POORFAMILY, "poorfamily"},
-              {VehicleData::RICHFAMILY, "richfamily"},
-              {VehicleData::EXECUTIVE, "executive"},
-              {VehicleData::WORKER, "worker"},
-              {VehicleData::BIG, "big"},
-              {VehicleData::TAXI, "taxi"},
-              {VehicleData::MOPED, "moped"},
-              {VehicleData::MOTORBIKE, "motorbike"},
-              {VehicleData::LEISUREBOAT, "leisureboat"},
-              {VehicleData::WORKERBOAT, "workerboat"},
-              {VehicleData::BICYCLE, "bicycle"},
-              {VehicleData::ONFOOT, "onfoot"},
+          const std::map<VehicleModelData::VehicleClass, std::string> classTypes{
+              {VehicleModelData::IGNORE, "ignore"},
+              {VehicleModelData::NORMAL, "normal"},
+              {VehicleModelData::POORFAMILY, "poorfamily"},
+              {VehicleModelData::RICHFAMILY, "richfamily"},
+              {VehicleModelData::EXECUTIVE, "executive"},
+              {VehicleModelData::WORKER, "worker"},
+              {VehicleModelData::BIG, "big"},
+              {VehicleModelData::TAXI, "taxi"},
+              {VehicleModelData::MOPED, "moped"},
+              {VehicleModelData::MOTORBIKE, "motorbike"},
+              {VehicleModelData::LEISUREBOAT, "leisureboat"},
+              {VehicleModelData::WORKERBOAT, "workerboat"},
+              {VehicleModelData::BICYCLE, "bicycle"},
+              {VehicleModelData::ONFOOT, "onfoot"},
           };
           for (auto &a : classTypes) {
             if (classType == a.second) {
@@ -162,11 +162,11 @@ bool LoaderIDE::load(const std::string &filename)
             }
           }
 
-          objects.insert({cars->ID, cars});
+          objects.insert({cars->id, cars});
           break;
         }
         case PEDS: {
-          std::shared_ptr<CharacterData> peds(new CharacterData);
+          std::shared_ptr<CharacterModelData> peds(new CharacterModelData);
 
           std::string id, driveMask;
 
@@ -178,10 +178,10 @@ bool LoaderIDE::load(const std::string &filename)
           getline(strstream, peds->animGroup, ',');
           getline(strstream, driveMask, ',');
 
-          peds->ID = atoi(id.c_str());
+          peds->id = atoi(id.c_str());
           peds->driveMask = atoi(driveMask.c_str());
 
-          objects.insert({peds->ID, peds});
+          objects.insert({peds->id, peds});
           break;
         }
         case PATH: {
@@ -252,13 +252,13 @@ bool LoaderIDE::load(const std::string &filename)
           }
 
           auto &object = objects[path.ID];
-          auto instance = std::dynamic_pointer_cast<ObjectData>(object);
+          auto instance = std::dynamic_pointer_cast<SimpleModelData>(object);
           instance->paths.push_back(path);
 
           break;
         }
         case HIER: {
-          std::shared_ptr<CutsceneObjectData> cut(new CutsceneObjectData);
+          std::shared_ptr<CutsceneModelData> cut(new CutsceneModelData);
 
           std::string id;
 
@@ -266,9 +266,9 @@ bool LoaderIDE::load(const std::string &filename)
           getline(strstream, cut->modelName, ',');
           getline(strstream, cut->textureName, ',');
 
-          cut->ID = atoi(id.c_str());
+          cut->id = atoi(id.c_str());
 
-          objects.insert({cut->ID, cut});
+          objects.insert({cut->id, cut});
           break;
         }
       }

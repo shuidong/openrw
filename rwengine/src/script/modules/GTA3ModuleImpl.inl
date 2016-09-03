@@ -3546,7 +3546,7 @@ void opcode_0136(const ScriptArguments& args, const ScriptInt arg1, const Script
 	@arg model Model ID
 */
 bool opcode_0137(const ScriptArguments& args, const ScriptVehicle vehicle, const ScriptModelID model) {
-	auto data = args.getWorld()->data->findObjectType<VehicleData>(model);
+	auto data = args.getWorld()->data->findObjectType<VehicleModelData>(model);
 	RW_CHECK(data, "non-vehicle model ID");
 	if (data) {
 		return vehicle->model->name == data->modelName;
@@ -8156,7 +8156,7 @@ void opcode_02dd(const ScriptArguments& args, const ScriptString areaName, Scrip
 bool opcode_02de(const ScriptArguments& args, const ScriptPlayer player) {
 	RW_UNUSED(args);
 	auto vehicle = player->getCharacter()->getCurrentVehicle();
-	return (vehicle && (vehicle->vehicle->classType & VehicleData::TAXI) == VehicleData::TAXI);
+	return (vehicle && (vehicle->vehicle->classType & VehicleModelData::TAXI) == VehicleModelData::TAXI);
 }
 
 /**
@@ -11343,7 +11343,7 @@ void opcode_03b6(const ScriptArguments& args, ScriptVec3 coord, const ScriptFloa
 	std::transform(oldmodel.begin(), oldmodel.end(), oldmodel.begin(), ::tolower);
 
 	auto newobjectid = args.getWorld()->data->findModelObject(newmodel);
-	auto nobj = args.getWorld()->data->findObjectType<ObjectData>(newobjectid);
+	auto nobj = args.getWorld()->data->findObjectType<SimpleModelData>(newobjectid);
 
 	/// @todo Objects need to adopt the new object ID, not just the model.
 	for(auto p : args.getWorld()->instancePool.objects) {

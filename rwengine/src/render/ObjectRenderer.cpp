@@ -52,7 +52,7 @@ void ObjectRenderer::renderGeometry(Model* model, size_t g, const glm::mat4& mod
 
     if (object && object->type() == GameObject::Instance) {
       auto instance = static_cast<InstanceObject*>(object);
-      dp.depthWrite = !(instance->object->flags & ObjectData::NO_ZBUFFER_WRITE);
+      dp.depthWrite = !(instance->object->flags & SimpleModelData::NO_ZBUFFER_WRITE);
     }
 
     if (model->geometries[g]->materials.size() > subgeom.material) {
@@ -156,8 +156,8 @@ void ObjectRenderer::renderItem(InventoryItem* item, const glm::mat4& modelMatri
     return;  // No model for this item
   }
 
-  std::shared_ptr<ObjectData> odata =
-      m_world->data->findObjectType<ObjectData>(item->getModelID());
+  std::shared_ptr<SimpleModelData> odata =
+      m_world->data->findObjectType<SimpleModelData>(item->getModelID());
   auto weapons = m_world->data->models["weapons"];
   if (weapons && weapons->resource) {
     auto itemModel = weapons->resource->findFrame(odata->modelName + "_l0");
@@ -359,7 +359,7 @@ void ObjectRenderer::renderVehicle(VehicleObject* vehicle, RenderList& outList)
 
   // Draw wheels n' stuff
   for (size_t w = 0; w < vehicle->info->wheels.size(); ++w) {
-    auto woi = m_world->data->findObjectType<ObjectData>(vehicle->vehicle->wheelModelID);
+    auto woi = m_world->data->findObjectType<SimpleModelData>(vehicle->vehicle->wheelModelID);
     if (woi) {
       Model* wheelModel = m_world->data->models["wheels"]->resource;
       auto& wi = vehicle->physVehicle->getWheelInfo(w);
@@ -406,13 +406,13 @@ void ObjectRenderer::renderPickup(PickupObject* pickup, RenderList& outList)
   modelMatrix =
       glm::rotate(modelMatrix, m_world->getGameTime(), glm::vec3(0.f, 0.f, 1.f));
 
-  auto odata = m_world->data->findObjectType<ObjectData>(pickup->getModelID());
+  auto odata = m_world->data->findObjectType<SimpleModelData>(pickup->getModelID());
 
   Model* model = nullptr;
   ModelFrame* itemModel = nullptr;
 
   /// @todo Better determination of is this object a weapon.
-  if (odata->ID >= 170 && odata->ID <= 184) {
+  if (odata->id >= 170 && odata->id <= 184) {
     auto weapons = m_world->data->models["weapons"];
     if (weapons && weapons->resource && odata) {
       model = weapons->resource;
@@ -481,7 +481,7 @@ void ObjectRenderer::renderProjectile(ProjectileObject* projectile, RenderList& 
 {
   glm::mat4 modelMatrix = projectile->getTimeAdjustedTransform(m_renderAlpha);
 
-  auto odata = m_world->data->findObjectType<ObjectData>(
+  auto odata = m_world->data->findObjectType<SimpleModelData>(
       projectile->getProjectileInfo().weapon->modelID);
   auto weapons = m_world->data->models["weapons"];
 

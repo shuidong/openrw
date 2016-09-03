@@ -15,11 +15,11 @@ int ObjectListModel::columnCount(const QModelIndex &parent) const
   return 3;
 }
 
-static std::map<ObjectInformation::ObjectClass, QString> gDataType = {
-    {ObjectInformation::_class("OBJS"), "Object"},
-    {ObjectInformation::_class("CARS"), "Vehicle"},
-    {ObjectInformation::_class("PEDS"), "Pedestrian"},
-    {ObjectInformation::_class("HIER"), "Cutscene"}};
+static std::map<ModelDataType, QString> gDataType = {
+    {ModelDataType::SimpleInfo,  "Object"},
+    {ModelDataType::VehicleInfo, "Vehicle"},
+    {ModelDataType::PedInfo,     "Pedestrian"},
+    {ModelDataType::ClumpInfo,   "Cutscene"}};
 
 QVariant ObjectListModel::data(const QModelIndex &index, int role) const
 {
@@ -30,22 +30,13 @@ QVariant ObjectListModel::data(const QModelIndex &index, int role) const
       return id;
     } else if (index.column() == 1) {
       auto object = _gameData->objectTypes[id];
-      if (gDataType[object->class_type].isEmpty()) {
+      if (gDataType[object->type].isEmpty()) {
         return QString("Unknown");
       }
-      return gDataType[object->class_type];
+      return gDataType[object->type];
     } else if (index.column() == 2) {
       auto object = _gameData->objectTypes[id];
-      if (object->class_type == ObjectData::class_id) {
-        auto v = std::static_pointer_cast<ObjectData>(object);
-        return QString::fromStdString(v->modelName);
-      } else if (object->class_type == VehicleData::class_id) {
-        auto v = std::static_pointer_cast<VehicleData>(object);
-        return QString::fromStdString(v->modelName);
-      } else if (object->class_type == CharacterData::class_id) {
-        auto v = std::static_pointer_cast<CharacterData>(object);
-        return QString::fromStdString(v->modelName);
-      }
+      return QString::fromStdString(object->modelName);
     }
   }
   return QVariant::Invalid;
@@ -71,7 +62,7 @@ QModelIndex ObjectListModel::index(int row, int column, const QModelIndex &paren
 {
   auto it = _gameData->objectTypes.begin();
   for (int i = 0; i < row; i++) it++;
-  auto id = it->second->ID;
+  auto id = it->second->id;
 
   return hasIndex(row, column, parent) ? createIndex(row, column, id) : QModelIndex();
 }

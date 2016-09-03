@@ -15,7 +15,7 @@ const float CharacterObject::DefaultJumpSpeed = 2.f;
 
 CharacterObject::CharacterObject(GameWorld* engine, const glm::vec3& pos,
                                  const glm::quat& rot, const ModelRef& model,
-                                 std::shared_ptr<CharacterData> data)
+                                 std::shared_ptr<CharacterModelData> data)
     : GameObject(engine, pos, rot, model)
     , currentState({})
     , currentVehicle(nullptr)

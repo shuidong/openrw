@@ -15,11 +15,11 @@ BOOST_AUTO_TEST_CASE(test_object_data)
 	gd.loadObjects(Global::getGamePath() + "/data/maps/generic.ide");
 
 	{
-		auto def = gd.findObjectType<ObjectData>(1100);
+    auto def = gd.findObjectType<SimpleModelData>(1100);
 
 		BOOST_REQUIRE( def );
 
-		BOOST_ASSERT(def->class_type == ObjectInformation::_class("OBJS"));
+    BOOST_ASSERT(def->type == ModelDataType::SimpleInfo);
 
 		BOOST_CHECK_EQUAL( def->modelName, "rd_Corner1" );
 		BOOST_CHECK_EQUAL( def->textureName, "generic" );

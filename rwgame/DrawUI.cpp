@@ -149,7 +149,7 @@ void drawPlayerInfo(PlayerController* player, GameWorld* world, GameRenderer* re
   if (current) {
     uint16_t model = current->getModelID();
     if (model > 0) {
-      ObjectDataPtr weaponData = world->data->findObjectType<ObjectData>(model);
+      ObjectDataPtr weaponData = world->data->findObjectType<SimpleModelData>(model);
       if (weaponData != nullptr) {
         itemTextureName = weaponData->modelName;
       }

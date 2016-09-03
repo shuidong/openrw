@@ -192,9 +192,7 @@ public:
   std::shared_ptr<T> findObjectType(ObjectID id)
   {
     auto f = objectTypes.find(id);
-    /// @TODO don't instanciate an object here just to read .type
-    T tmp;
-    if (f != objectTypes.end() && f->second->class_type == tmp.class_type) {
+    if (f != objectTypes.end() && f->second->type == T::kType) {
       return std::static_pointer_cast<T>(f->second);
     }
     return nullptr;
