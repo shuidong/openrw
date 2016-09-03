@@ -49,7 +49,7 @@ public:
   /**
    * @brief ProjectileObject constructor
    */
-  ProjectileObject(GameWorld* world, const glm::vec3& position,
+  ProjectileObject(GameWorld* world, ObjectID modelid, const glm::vec3& position,
                    const ProjectileInfo& info);
 
   ~ProjectileObject();

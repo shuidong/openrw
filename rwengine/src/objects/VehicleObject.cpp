@@ -87,11 +87,11 @@ private:
   VehicleObject::Part* m_part;
 };
 
-VehicleObject::VehicleObject(GameWorld* engine, const glm::vec3& pos,
+VehicleObject::VehicleObject(GameWorld* engine, ObjectID modelid, const glm::vec3& pos,
                              const glm::quat& rot, const ModelRef& model,
                              VehicleDataHandle data, VehicleInfoHandle info,
                              const glm::u8vec3& prim, const glm::u8vec3& sec)
-    : GameObject(engine, pos, rot, model)
+    : GameObject(engine, modelid, pos, rot, model)
     , steerAngle(0.f)
     , throttle(0.f)
     , brake(0.f)

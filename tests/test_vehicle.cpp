@@ -16,6 +16,8 @@ BOOST_AUTO_TEST_CASE(test_create_vehicle)
 	BOOST_REQUIRE(vehicle->info != nullptr);
 	BOOST_REQUIRE(vehicle->vehicle != nullptr);
 
+  BOOST_CHECK_EQUAL(vehicle->getObjectID(), 90u);
+
 	// Hardcoded values for the moment
   BOOST_CHECK_EQUAL(vehicle->vehicle->vehicletype, VehicleModelData::CAR);
 

@@ -143,7 +143,7 @@ public:
    * @param model
    * @param ped PEDS_t struct to use.
    */
-  CharacterObject(GameWorld* engine, const glm::vec3& pos, const glm::quat& rot,
+  CharacterObject(GameWorld* engine, ObjectID modelid, const glm::vec3& pos, const glm::quat& rot,
                   const ModelRef& model, std::shared_ptr<CharacterModelData> data);
 
   ~CharacterObject();

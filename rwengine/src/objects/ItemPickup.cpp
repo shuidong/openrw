@@ -6,7 +6,7 @@
 
 ItemPickup::ItemPickup(GameWorld *world, const glm::vec3 &position, PickupType type,
                        InventoryItem *item)
-    : PickupObject(world, position, item->getModelID(), type), item(item)
+    : PickupObject(world, item->getModelID(), position, type), item(item)
 {
   RW_CHECK(item != nullptr, "Pickup created with null item");
 }

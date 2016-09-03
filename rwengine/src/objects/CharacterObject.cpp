@@ -13,10 +13,10 @@ static glm::vec3 enter_offset(0.81756252f, 0.34800607f, -0.486281008f);
 
 const float CharacterObject::DefaultJumpSpeed = 2.f;
 
-CharacterObject::CharacterObject(GameWorld* engine, const glm::vec3& pos,
+CharacterObject::CharacterObject(GameWorld* engine, ObjectID modelid, const glm::vec3& pos,
                                  const glm::quat& rot, const ModelRef& model,
                                  std::shared_ptr<CharacterModelData> data)
-    : GameObject(engine, pos, rot, model)
+    : GameObject(engine, modelid, pos, rot, model)
     , currentState({})
     , currentVehicle(nullptr)
     , currentSeat(0)

@@ -23,7 +23,7 @@ public:
   std::shared_ptr<DynamicObjectData> dynamics;
   bool _enablePhysics;
 
-  InstanceObject(GameWorld* engine, const glm::vec3& pos, const glm::quat& rot,
+  InstanceObject(GameWorld* engine, ObjectID modelid, const glm::vec3& pos, const glm::quat& rot,
                  const ModelRef& model, const glm::vec3& scale,
                  std::shared_ptr<SimpleModelData> obj, InstanceObject* lod,
                  std::shared_ptr<DynamicObjectData> dyn);

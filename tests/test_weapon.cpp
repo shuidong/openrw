@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(TestProjectile)
 
 		auto wepdata = Global::get().e->data->weaponData[5];
 
-		auto projectile = new ProjectileObject(Global::get().e, {26.f, 1.f, 10.f},
+    auto projectile = new ProjectileObject(Global::get().e, 0, {26.f, 1.f, 10.f},
 		{
 												ProjectileObject::Grenade,
 												{0.f, 0.f, -1.f},
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(TestProjectile)
 
 		auto wepdata = Global::get().e->data->weaponData[6];
 
-		auto projectile = new ProjectileObject(Global::get().e, {26.f, 1.f, 10.f},
+    auto projectile = new ProjectileObject(Global::get().e, 0, {26.f, 1.f, 10.f},
 		{
 												ProjectileObject::Molotov,
 												{0.f, 0.f, -1.f},
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE(TestProjectile)
 
 		auto wepdata = Global::get().e->data->weaponData[7];
 
-		auto projectile = new ProjectileObject(Global::get().e, {26.f, 1.f, 10.f},
+    auto projectile = new ProjectileObject(Global::get().e, 0, {26.f, 1.f, 10.f},
 		{
 												ProjectileObject::RPG,
 												{0.f, 0.f, -1.f},

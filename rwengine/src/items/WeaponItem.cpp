@@ -119,7 +119,7 @@ void WeaponItem::fireProjectile(CharacterObject* owner)
   forceFactor = std::max(0.1f, forceFactor / throwTime);
 
   auto projectile = new ProjectileObject(
-      owner->engine, fireOrigin,
+      owner->engine, _wepData->modelID, fireOrigin,
       {pt, direction,
        17.f * forceFactor,  /// @todo pull a better velocity from somewhere
        3.5f, _wepData});

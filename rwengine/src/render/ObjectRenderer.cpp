@@ -406,7 +406,7 @@ void ObjectRenderer::renderPickup(PickupObject* pickup, RenderList& outList)
   modelMatrix =
       glm::rotate(modelMatrix, m_world->getGameTime(), glm::vec3(0.f, 0.f, 1.f));
 
-  auto odata = m_world->data->findObjectType<SimpleModelData>(pickup->getModelID());
+  auto odata = m_world->data->findObjectType<SimpleModelData>(pickup->getObjectID());
 
   Model* model = nullptr;
   ModelFrame* itemModel = nullptr;

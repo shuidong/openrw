@@ -17,6 +17,7 @@ BOOST_AUTO_TEST_CASE(test_create)
 
 		auto controller = new DefaultAIController(character);
 
+    BOOST_CHECK_EQUAL(character->getObjectID(), 1u);
 
 		// Check the initial activity is Idle.
 		BOOST_CHECK_EQUAL( controller->getCurrentActivity(), nullptr );

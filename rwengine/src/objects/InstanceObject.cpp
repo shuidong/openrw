@@ -5,12 +5,12 @@
 #include <engine/GameWorld.hpp>
 #include <objects/InstanceObject.hpp>
 
-InstanceObject::InstanceObject(GameWorld* engine, const glm::vec3& pos,
+InstanceObject::InstanceObject(GameWorld* engine, ObjectID modelid, const glm::vec3& pos,
                                const glm::quat& rot, const ModelRef& model,
                                const glm::vec3& scale, std::shared_ptr<SimpleModelData> obj,
                                InstanceObject* lod,
                                std::shared_ptr<DynamicObjectData> dyn)
-    : GameObject(engine, pos, rot, model)
+    : GameObject(engine, modelid, pos, rot, model)
     , health(100.f)
     , scale(scale)
     , body(nullptr)

@@ -12,7 +12,7 @@ public:
 	bool picked_up = false;
 
 	TestPickup(GameWorld* engine, const glm::vec3& position)
-		: PickupObject(engine, position, 0, OnStreet)
+    : PickupObject(engine, 0, position, OnStreet)
 	{}
 
 	bool onCharacterTouch(CharacterObject *character) {

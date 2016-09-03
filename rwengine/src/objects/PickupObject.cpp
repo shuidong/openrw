@@ -61,14 +61,13 @@ uint32_t PickupObject::behaviourFlags(PickupType type)
   }
 }
 
-PickupObject::PickupObject(GameWorld* world, const glm::vec3& position, int modelID,
+PickupObject::PickupObject(GameWorld* world, ObjectID modelid, const glm::vec3& position,
                            PickupType type)
-    : GameObject(world, position, glm::quat(), nullptr)
+    : GameObject(world, modelid, position, glm::quat(), nullptr)
     , m_ghost(nullptr)
     , m_shape(nullptr)
     , m_enabled(false)
     , m_collected(false)
-    , m_model(modelID)
     , m_type(type)
 {
   btTransform tf;

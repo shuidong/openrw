@@ -22,12 +22,15 @@ class GameWorld;
  *
  * Contains handle to the world, and other useful properties like water level
  * tracking used to make tunnels work.
+ *
+ * This should be called something like GameEntity.
  */
 class GameObject
 {
   glm::vec3 _lastPosition;
   glm::quat _lastRotation;
   GameObjectID objectID;
+  ObjectID modelid_;
 
 public:
   glm::vec3 position;
@@ -53,11 +56,12 @@ public:
    */
   bool visible;
 
-  GameObject(GameWorld* engine, const glm::vec3& pos, const glm::quat& rot,
+  GameObject(GameWorld* engine, ObjectID modelid, const glm::vec3& pos, const glm::quat& rot,
              ModelRef model)
       : _lastPosition(pos)
       , _lastRotation(rot)
       , objectID(0)
+      , modelid_(modelid)
       , position(pos)
       , rotation(rot)
       , model(model)
@@ -77,6 +81,15 @@ public:
   {
     return objectID;
   }
+
+  /**
+   * @return The Model ObjectID for this entity
+   */
+  ObjectID getObjectID() const
+  {
+    return modelid_;
+  }
+
   /**
    * Do not call this, use GameWorld::insertObject
    */

@@ -197,7 +197,7 @@ InstanceObject* GameWorld::createInstance(const uint16_t id, const glm::vec3& po
       logger->warning("World", "Instance with missing model: " + std::to_string(id));
     }
 
-    auto instance = new InstanceObject(this, pos, rot, m, glm::vec3(1.f, 1.f, 1.f), oi,
+    auto instance = new InstanceObject(this, id, pos, rot, m, glm::vec3(1.f, 1.f, 1.f), oi,
                                        nullptr, dydata);
 
     instancePool.insert(instance);
@@ -305,7 +305,7 @@ CutsceneObject* GameWorld::createCutsceneObject(const uint16_t id, const glm::ve
 
   ModelRef m = data->models[modelname];
 
-  auto instance = new CutsceneObject(this, pos, rot, m);
+  auto instance = new CutsceneObject(this, id, pos, rot, m);
 
   cutscenePool.insert(instance);
   allObjects.push_back(instance);
@@ -382,7 +382,7 @@ VehicleObject* GameWorld::createVehicle(const uint16_t id, const glm::vec3& pos,
       }
     }
 
-    auto vehicle = new VehicleObject{this, pos, rot, m, vti, info->second, prim, sec};
+    auto vehicle = new VehicleObject{this, id, pos, rot, m, vti, info->second, prim, sec};
     vehicle->setGameObjectID(gid);
 
     vehiclePool.insert(vehicle);
@@ -424,7 +424,7 @@ CharacterObject* GameWorld::createPedestrian(const uint16_t id, const glm::vec3&
     ModelRef m = data->models[modelname];
 
     if (m && m->resource) {
-      auto ped = new CharacterObject(this, pos, rot, m, pt);
+      auto ped = new CharacterObject(this, id, pos, rot, m, pt);
       ped->setGameObjectID(gid);
       new DefaultAIController(ped);
       pedestrianPool.insert(ped);
@@ -452,7 +452,7 @@ CharacterObject* GameWorld::createPlayer(const glm::vec3& pos, const glm::quat& 
     ModelRef m = data->models[modelname];
 
     if (m && m->resource) {
-      auto ped = new CharacterObject(this, pos, rot, m, nullptr);
+      auto ped = new CharacterObject(this, 0, pos, rot, m, nullptr);
       ped->setGameObjectID(gid);
       ped->setLifetime(GameObject::PlayerLifetime);
       players.push_back(new PlayerController(ped));
@@ -488,7 +488,7 @@ PickupObject* GameWorld::createPickup(const glm::vec3& pos, int id, int type)
     pickup = new ItemPickup(this, pos, pickuptype, *it);
   } else {
     RW_UNIMPLEMENTED("Non-weapon pickups");
-    pickup = new PickupObject(this, pos, id, pickuptype);
+    pickup = new PickupObject(this, id, pos, pickuptype);
   }
 
   pickupPool.insert(pickup);
