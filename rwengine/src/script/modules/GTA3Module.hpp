@@ -5,7 +5,7 @@
 class GTA3Module : public ScriptModule
 {
 public:
-	GTA3Module();
+  GTA3Module();
 };
 
 #endif
