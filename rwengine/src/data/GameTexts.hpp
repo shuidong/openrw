@@ -35,30 +35,31 @@ GameString fromString(const std::string& str);
  */
 namespace GameSymbols
 {
-	static constexpr GameStringChar Money  = '$';
-	static constexpr GameStringChar Heart  = '{';
-	static constexpr GameStringChar Armour = '[';
-	static constexpr GameStringChar Star   = ']';
+static constexpr GameStringChar Money = '$';
+static constexpr GameStringChar Heart = '{';
+static constexpr GameStringChar Armour = '[';
+static constexpr GameStringChar Star = ']';
 }
 
 class GameTexts
 {
-	using StringTable = std::unordered_map<GameStringKey, GameString>;
-	StringTable m_strings;
+  using StringTable = std::unordered_map<GameStringKey, GameString>;
+  StringTable m_strings;
+
 public:
+  void addText(const GameStringKey& id, GameString&& text)
+  {
+    m_strings.emplace(id, text);
+  }
 
-	void addText(const GameStringKey& id, GameString&& text) {
-		m_strings.emplace(id, text);
-	}
-
-	GameString text(const GameStringKey& id) {
-		auto a = m_strings.find(id);
-		if( a != m_strings.end() ) {
-			return a->second;
-		}
-		return GameStringUtil::fromString("MISSING: " + id);
-	}
-
+  GameString text(const GameStringKey& id)
+  {
+    auto a = m_strings.find(id);
+    if (a != m_strings.end()) {
+      return a->second;
+    }
+    return GameStringUtil::fromString("MISSING: " + id);
+  }
 };
 
 #endif
