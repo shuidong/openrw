@@ -90,7 +90,9 @@ void GameData::parseDAT(const std::string& path)
       if (space != line.npos) {
         cmd = line.substr(0, space);
         if (cmd == "IDE") {
-          addIDE(line.substr(space + 1));
+          auto idepath = fixPath(line.substr(space + 1));
+          idepath = findPathRealCase(datpath, idepath);
+          loadObjects(idepath);
         } else if (cmd == "SPLASH") {
           splash = line.substr(space + 1);
         } else if (cmd == "COLFILE") {
@@ -101,6 +103,10 @@ void GameData::parseDAT(const std::string& path)
           std::string fixedpath = fixPath(line.substr(space + 1));
           fixedpath = findPathRealCase(datpath, fixedpath);
           loadIPL(fixedpath);
+        } else if (cmd == "MODELFILE") {
+          std::string modelpath = fixPath(line.substr(space+1));
+          modelpath = findPathRealCase(datpath, modelpath);
+          loadModelDFF(modelpath);
         } else if (cmd == "TEXDICTION") {
           std::string texpath = line.substr(space + 1);
           for (size_t t = 0; t < texpath.size(); ++t) {
@@ -115,19 +121,6 @@ void GameData::parseDAT(const std::string& path)
       }
     }
   }
-}
-
-void GameData::addIDE(const std::string& name)
-{
-  std::string lowername = name;
-  for (size_t t = 0; t < lowername.size(); ++t) {
-    lowername[t] = tolower(lowername[t]);
-    if (lowername[t] == '\\') {
-      lowername[t] = '/';
-    }
-  }
-
-  ideLocations.insert({lowername, datpath + "/" + lowername});
 }
 
 bool GameData::loadObjects(const std::string& name)
@@ -404,6 +397,37 @@ Model *GameData::getOrLoadObjectDFF(ObjectID id)
   }
 
   return def->model = loadObjectDFF(modelname + ".dff");
+}
+
+void GameData::loadModelDFF(const std::string &path)
+{
+  /// @todo fix this when rebasing onto the fs changes
+  auto slash = path.find_last_of("/");
+  auto name = path.substr(slash+1);
+  std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+  auto model = loadObjectDFF(name);
+  if (!model) {
+    logger->error("Data", "Failed to load model file " + path);
+    return;
+  }
+  for (auto& frame : model->frames) {
+    /// names are encoded as ${name}_l${lod}
+    int lod = 0;
+    std::string name = frame->getName();
+    auto underscore = name.rfind("_l");
+    if (underscore != std::string::npos) {
+      lod = std::atoi(name.substr(underscore+2).c_str());
+      name = name.substr(0, underscore);
+    }
+
+    auto id = findModelObject(name);
+    if ((int16_t)id == -1) {
+      continue;
+    }
+    auto& data = objectTypes[id];
+    data->model = model;
+    data->frames[lod] = frame;
+  }
 }
 
 void GameData::loadIFP(const std::string& name)

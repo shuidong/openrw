@@ -35,6 +35,7 @@ public:
 
   /// @todo replace with correct data
   Model* model = nullptr;
+  ModelFrame* frames[3] = {};
 
   BaseModelData(const ModelDataType type) : type(type)
   {

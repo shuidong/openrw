@@ -421,24 +421,9 @@ void ObjectRenderer::renderPickup(PickupObject* pickup, RenderList& outList)
 
   auto odata = m_world->data->findObjectType<SimpleModelData>(pickup->getObjectID());
 
-  Model* model = nullptr;
-  ModelFrame* itemModel = nullptr;
-
-  /// @todo Better determination of is this object a weapon.
-  if (odata->id >= 170 && odata->id <= 184) {
-    auto model = m_world->data->models["weapons"];
-    if (model && odata) {
-      itemModel = model->findFrame(odata->modelName + "_l0");
-      if (!itemModel) {
-        return;
-      }
-    }
-  } else {
-    auto model = m_world->data->models[odata->modelName];
-    if (model) {
-      itemModel = model->frames[model->rootFrameIdx];
-    }
-  }
+  auto model = odata->model;
+  /// @todo use the correct LOD
+  auto itemModel = odata->frames[0];
 
   RW_CHECK(model && itemModel, "Pickup has no model");
 

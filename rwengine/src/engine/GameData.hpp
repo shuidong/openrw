@@ -72,11 +72,6 @@ public:
   }
 
   /**
-   * Stores the given IDE file in the list of item definitions to load.
-   */
-  void addIDE(const std::string& name);
-
-  /**
    * Loads the object definitions from the given IDE file
    */
   bool loadObjects(const std::string& name);
@@ -135,6 +130,11 @@ public:
   Model* getOrLoadObjectDFF(ObjectID id);
 
   /**
+   * @brief loadModelDFF loads a DFF and tries to associated its frames
+   */
+  void loadModelDFF(const std::string& path);
+
+  /**
    * Loads an IFP file containing animations
    */
   void loadIFP(const std::string& name);
@@ -172,7 +172,6 @@ public:
    * Maps the paths in GTA3.dat to the real paths
    */
   std::map<std::string, std::string> iplLocations;
-  std::map<std::string, std::string> ideLocations;
 
   /**
    * Map of loaded archives

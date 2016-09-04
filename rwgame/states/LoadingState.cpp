@@ -8,11 +8,6 @@ LoadingState::LoadingState(RWGame* game) : State(game), next(nullptr)
 
 void LoadingState::enter()
 {
-  // Load Item definitions
-  for (auto& def : game->getGameData()->ideLocations) {
-    game->getGameData()->loadObjects(def.second);
-  }
-
   game->newGame();
 }
 
