@@ -374,9 +374,10 @@ void ObjectRenderer::renderVehicle(VehicleObject* vehicle, RenderList& outList)
   for (size_t w = 0; w < vehicle->info->wheels.size(); ++w) {
     auto woi = m_world->data->findObjectType<SimpleModelData>(vehicle->vehicle->wheelModelID);
     if (woi) {
-      Model* wheelModel = m_world->data->models["wheels"];
+      Model* wheelModel = woi->model;
       auto& wi = vehicle->physVehicle->getWheelInfo(w);
       if (wheelModel) {
+        ModelFrame* wheelFrame = woi->frames[0];
         // Construct our own matrix so we can use the local transform
         vehicle->physVehicle->updateWheelTransform(w, false);
         /// @todo migrate this into Vehicle physics tick so we can interpolate old -> new
@@ -405,7 +406,8 @@ void ObjectRenderer::renderVehicle(VehicleObject* vehicle, RenderList& outList)
           wheelM = glm::scale(wheelM, glm::vec3(-1.f, 1.f, 1.f));
         }
 
-        renderWheel(vehicle, wheelModel, wheelM, woi->modelName, outList);
+        auto geom = wheelFrame->getGeometries()[0];
+        renderGeometry(wheelModel, geom, wheelM, 1.f, vehicle, outList);
       }
     }
   }
